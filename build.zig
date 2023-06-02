@@ -1,9 +1,5 @@
 const std = @import("std");
 
-const src_cpp = [_][]const u8{
-    "lib/upstream/llama.cpp",
-};
-
 const cxx_flags = [_][]const u8{
     "-std=gnu++11",
     "-Wall",
@@ -12,10 +8,6 @@ const cxx_flags = [_][]const u8{
     "-Wcast-qual",
     "-Wno-unused-function",
     "-Wno-multichar",
-};
-
-const src_c = [_][]const u8{
-    "lib/upstream/ggml.c",
 };
 
 const c_flags = [_][]const u8{
@@ -46,8 +38,12 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
     lib.linkLibCpp();
-    lib.addCSourceFiles(&src_cpp, &cxx_flags);
-    lib.addCSourceFiles(&src_c, &c_flags);
+    lib.addCSourceFiles(&.{
+        "lib/upstream/llama.cpp",
+    }, &cxx_flags);
+    lib.addCSourceFiles(&.{
+        "lib/upstream/ggml.c",
+    }, &c_flags);
     b.installArtifact(lib);
 
     const exe = b.addExecutable(.{
